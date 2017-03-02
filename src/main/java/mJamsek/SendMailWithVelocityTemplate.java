@@ -43,11 +43,11 @@ public class SendMailWithVelocityTemplate {
 		}
 
 		Session session = Session.getDefaultInstance(prop,
-				new Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
+			new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(
 						prop.getProperty("mail.user"), prop.getProperty("mail.passwd"));
-					}
+				}
 		});
 
 		try{
@@ -77,26 +77,25 @@ public class SendMailWithVelocityTemplate {
 			t.merge( context, out );
 
 			// velocity stuff ends.
-
 			body.setContent(out.toString(), "text/html");
 
 			Multipart multipart = new MimeMultipart();
 			multipart.addBodyPart(body);
-
 			body = new MimeBodyPart();
 
-			String filename = "mail-attachement-template.txt";
+			String filename = "src/main/resources/templates/mail-attachement-template.txt";
 			DataSource source = new FileDataSource(filename);
 			body.setDataHandler(new DataHandler(source));
 			body.setFileName("attachement");
 			multipart.addBodyPart(body);
-			message.setContent(multipart, "text/html");
+			message.setContent(multipart, "text/html"); //problem z multipart objektom
 
 			// Send mail
 			Transport.send(message);
 			System.out.println("Mail sent ");
-
+		
 		}catch(Exception ex){
+			System.out.println("problem " + ex.getMessage());
 			ex.printStackTrace();
 		}
 
