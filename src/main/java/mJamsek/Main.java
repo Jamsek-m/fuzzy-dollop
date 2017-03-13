@@ -53,7 +53,8 @@ public class Main {
 		
 		get("/send2", (req, res) -> {
 			res.type("application/json");
-			SendMailWithVelocityTemplate.poslji(); //naj bi poslalo template-rendered html majl
+			//SendMailWithVelocityTemplate.poslji(); //naj bi poslalo template-rendered html majl
+			SendMailVelocity.sendMail("miha_jamsek@windowslive.com", "http://test");
 			return JsonUtil.toJson(true);
 		});
 
@@ -88,7 +89,7 @@ public class Main {
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("miha_jamsek@windowslive.com"));
 			message.setSubject("Testing Subject");
 			message.setText("Dear Mail Crawler,\n\n No spam to my email, please!");
-
+			
 			Transport.send(message);
 
 			System.out.println("Done");
