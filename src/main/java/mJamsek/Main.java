@@ -21,42 +21,43 @@ public class Main {
 		staticFileLocation("/public");
 
 		get("/", (req, res) -> {
-			res.type("text/html");
-			Map<String, Object> model = new HashMap<>();
-			return new VelocityTemplateEngine().render(new ModelAndView(model, "templates/index.vtl"));
+			res.type("text/html"); //tip odgovora - html
+			Map<String, Object> model = new HashMap<>(); //hashmap za podatke ki se posredujejo templatu
+			return new VelocityTemplateEngine().render(new ModelAndView(model, "templates/index.vtl")); //render template
 		});
 
 		get("/data", (req, res) -> {
-			res.type("application/json");
-			User u = new User(1, "lalala", "tttt");
-			return JsonUtil.toJson(u);
+			res.type("application/json"); //tip odgovora - json
+			User u = new User(1, "lalala", "tttt"); //kreira userja
+			return JsonUtil.toJson(u); //odgovori z userjem
 		});
 
 		post("/data", (req, res) -> {
-			res.type("application/json");
+			res.type("application/json"); //response type - json
 
-			JSONObject json = (JSONObject) new JSONParser().parse(req.body());
+			JSONObject json = (JSONObject) new JSONParser().parse(req.body()); //sparsa request da dobi podatke
 
 			int id = Integer.parseInt(json.get("id").toString());
 			String ime = json.get("ime").toString();
 			String email = json.get("email").toString();
 
-			User u = new User(id, ime, email);
-			return JsonUtil.toJson(u);
+			User u = new User(id, ime, email); //ustvari uerja s temi podatki
+			return JsonUtil.toJson(u); //poslje (istega) userja nazaj
 		});
 
 		get("/send", (req, res) -> {
 			res.type("application/json");
-			boolean ratalo = sendMail();
+			boolean ratalo = sendMail(); //poslje plain text mejl
 			return JsonUtil.toJson(ratalo);
 		});
 		
 		get("/send2", (req, res) -> {
 			res.type("application/json");
-			SendMailWithVelocityTemplate.poslji();
+			SendMailWithVelocityTemplate.poslji(); //naj bi poslalo template-rendered html majl
 			return JsonUtil.toJson(true);
 		});
 
+		//lovi napake in jih posreduje v json obliki
 		exception(IllegalArgumentException.class, (e, req, res) -> {
 			res.status(400);
 			res.body(JsonUtil.toJson(new ResponseError(e)));

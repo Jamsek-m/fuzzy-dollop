@@ -88,8 +88,7 @@ public class SendMailWithVelocityTemplate {
 			body.setDataHandler(new DataHandler(source));
 			body.setFileName("attachement");
 			multipart.addBodyPart(body);
-			message.setContent(multipart, "text/html"); //problem z multipart objektom
-
+			message.setContent(multipart, "text/html; charset=UTF-8"); //problem z multipart objektom
 			// Send mail
 			Transport.send(message);
 			System.out.println("Mail sent ");
