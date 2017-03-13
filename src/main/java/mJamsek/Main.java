@@ -45,17 +45,17 @@ public class Main {
 			return JsonUtil.toJson(u); //poslje (istega) userja nazaj
 		});
 
-		get("/send", (req, res) -> {
+		/*get("/send", (req, res) -> {
 			res.type("application/json");
 			boolean ratalo = sendMail(); //poslje plain text mejl
 			return JsonUtil.toJson(ratalo);
-		});
+		});*/
 		
-		get("/send2", (req, res) -> {
+		get("/send", (req, res) -> {
 			res.type("application/json");
 			//SendMailWithVelocityTemplate.poslji(); //naj bi poslalo template-rendered html majl
-			SendMailVelocity.sendMail("miha_jamsek@windowslive.com", "http://test");
-			return JsonUtil.toJson(true);
+			return SendMailVelocity.sendMail("miha_jamsek@windowslive.com", "http://www.google.com");
+			//return JsonUtil.toJson(true);
 		});
 
 		//lovi napake in jih posreduje v json obliki
@@ -66,7 +66,7 @@ public class Main {
 
 	}
 
-	public static boolean sendMail() {
+	/*public static boolean sendMail() {
 		final String username = "playernobody@gmail.com";
 		final String password = "jljyjoaipsjojvbi";
 
@@ -98,7 +98,7 @@ public class Main {
 		} catch (MessagingException e) {
 			return false;
 		}
-	}
+	}*/
 }
 
 class ResponseError {

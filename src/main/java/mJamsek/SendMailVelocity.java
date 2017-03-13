@@ -1,6 +1,9 @@
 package mJamsek;
 
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -20,6 +23,7 @@ import org.apache.velocity.runtime.log.NullLogChute;
 
 public class SendMailVelocity{
 
+	//zrendera template z podanimi vrednostmi
 	public static StringWriter getVelocityEngine(String templateName, VelocityContext velocityContext){
 		VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
@@ -37,8 +41,10 @@ public class SendMailVelocity{
 	}
 	
 	
-	
-	public static void sendMail(String userMailId, String url){
+	//poslje mail - duuh
+	public static String sendMail(String userMailId, String url){
+		
+		//mail settings
 		final String username = "playernobody@gmail.com";
 		final String password = "jljyjoaipsjojvbi";
 		
@@ -48,6 +54,7 @@ public class SendMailVelocity{
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.port", "587");
 		
+		//gmail seja
 		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(username, password);
@@ -64,9 +71,17 @@ public class SendMailVelocity{
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userMailId));
             message.setSubject("Subject Header");
             Transport.send(message);
-			
+            
+            //logging data
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"); 
+            Date date = new Date();
+            
+			System.out.println("E-mail sent at " + dateFormat.format(date));
+			return JsonUtil.toJson(true);
 		}catch (MessagingException e) {
-            throw new RuntimeException(e);
+			System.err.println(e);
+			return JsonUtil.toJson(false);
+            //throw new RuntimeException(e);
         }
 	}
 	
