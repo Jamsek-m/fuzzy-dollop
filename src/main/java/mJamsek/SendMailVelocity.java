@@ -42,7 +42,7 @@ public class SendMailVelocity{
 	
 	
 	//poslje mail - duuh
-	public static String sendMail(String userMailId, String url){
+	public static String sendMail(String userMailId, String subject, String templateName, VelocityContext podatki){
 		
 		//mail settings
 		final String username = "playernobody@gmail.com";
@@ -62,14 +62,12 @@ public class SendMailVelocity{
 		});
 		
 		try{
-			VelocityContext velContext = new VelocityContext();
-			velContext.put("URL", url);
-			StringWriter sw = getVelocityEngine("templates/email-template.vtl", velContext);
+			StringWriter sw = getVelocityEngine(templateName, podatki);
 			Message message = new MimeMessage(session);
             message.setContent(sw.toString() + "", "text/html");
             message.setFrom(new InternetAddress("me@gmail.com"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userMailId));
-            message.setSubject("Subject Header");
+            message.setSubject(subject);
             Transport.send(message);
             
             //logging data

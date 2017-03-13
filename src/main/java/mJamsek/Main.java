@@ -3,17 +3,12 @@ package mJamsek;
 import static spark.Spark.*;
 import java.util.*;
 
+import org.apache.velocity.VelocityContext;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import spark.*;
 import spark.template.velocity.VelocityTemplateEngine;
-
-import com.google.gson.Gson;
-import javax.mail.*;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 public class Main {
 	public static void main(String[] args) {
@@ -44,18 +39,15 @@ public class Main {
 			User u = new User(id, ime, email); //ustvari uerja s temi podatki
 			return JsonUtil.toJson(u); //poslje (istega) userja nazaj
 		});
-
-		/*get("/send", (req, res) -> {
-			res.type("application/json");
-			boolean ratalo = sendMail(); //poslje plain text mejl
-			return JsonUtil.toJson(ratalo);
-		});*/
 		
 		get("/send", (req, res) -> {
 			res.type("application/json");
-			//SendMailWithVelocityTemplate.poslji(); //naj bi poslalo template-rendered html majl
-			return SendMailVelocity.sendMail("miha_jamsek@windowslive.com", "http://www.google.com");
-			//return JsonUtil.toJson(true);
+			
+			VelocityContext podatki = new VelocityContext();
+			podatki.put("URL", "http://www.google.com");
+			
+			Mailer mailer = new Mailer("miha_jamsek@windowslive.com", "Testno sporocilo", "templates/email-template.vtl", podatki);
+			return mailer.sendMail();
 		});
 
 		//lovi napake in jih posreduje v json obliki
@@ -101,116 +93,4 @@ public class Main {
 	}*/
 }
 
-class ResponseError {
-	private String message;
 
-	public ResponseError(String message, String... args) {
-		this.message = String.format(message, args);
-	}
-
-	public ResponseError(Exception e) {
-		this.message = e.getMessage();
-	}
-
-	public String getMessage() {
-		return this.message;
-	}
-}
-
-class JsonUtil {
-	public static String toJson(Object object) {
-		return new Gson().toJson(object);
-	}
-
-	public static ResponseTransformer json() {
-		return JsonUtil::toJson;
-	}
-}
-
-class UserService {
-
-	private ArrayList<User> seznam;
-	private int count;
-
-	public UserService() {
-		this.seznam = new ArrayList<User>();
-		this.count = 1;
-	}
-
-	public ArrayList<User> getAllUsers() {
-		return this.seznam;
-	}
-
-	public User getUser(int id) {
-		Iterator<User> it = this.seznam.iterator();
-		while (it.hasNext()) {
-			User curr = it.next();
-			if (curr.getId() == id) {
-				return curr;
-			}
-		}
-		return null;
-	}
-
-	public User createUser(int id, String name, String email) {
-		User u = new User(id, name, email);
-		this.seznam.add(u);
-		this.count++;
-		return u;
-	}
-
-	public User updateUser(int id, String name, String email) {
-		Iterator<User> it = this.seznam.iterator();
-		while (it.hasNext()) {
-			User curr = it.next();
-			if (curr.getId() == id) {
-				curr.setEmail(email);
-				curr.setName(name);
-				return curr;
-			}
-		}
-		return null;
-	}
-
-	public int getNewId() {
-		return this.count + 1;
-	}
-
-}
-
-class User {
-	private int id;
-	private String name;
-	private String email;
-
-	public User(int i, String n, String e) {
-		this.id = i;
-		this.email = e;
-		this.name = n;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-}
