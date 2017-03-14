@@ -49,6 +49,23 @@ public class Main {
 			Mailer mailer = new Mailer("miha_jamsek@windowslive.com", "Testno sporocilo", "templates/email-template.vtl", podatki);
 			return mailer.sendMail();
 		});
+		
+		post("/sendContact", (req, res) -> {
+			res.type("application/json");
+			
+			JSONObject json = (JSONObject) new JSONParser().parse(req.body());
+			String ime = json.get("ime").toString();
+			String naslov = json.get("naslov").toString();
+			String sporocilo = json.get("sporocilo").toString();
+			
+			VelocityContext podatki = new VelocityContext();
+			podatki.put("ime", ime);
+			podatki.put("naslov", naslov);
+			podatki.put("sporocilo", sporocilo);
+			
+			Mailer mailer = new Mailer("miha_jamsek@windowslive.com", "[mJamsek Site] Novo Sporocilo", "templates/email-template.vtl", podatki);
+			return mailer.sendMail();
+		});
 
 		//lovi napake in jih posreduje v json obliki
 		exception(IllegalArgumentException.class, (e, req, res) -> {

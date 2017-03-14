@@ -3,23 +3,95 @@
 <html>
 	<head>
 		<title>Test Site</title>
-		<meta charset="UTF-8" />	
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<meta charset="UTF-8" />
 	</head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+	<style>
+	.toggle {
+		display: none;
+	}
+	
+	.centered {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	</style>
+	
 	<script>
-		$(document).ready(function(){
-			$("#gumb").click(function(){
-				var id =$("#i_id").val();
+		$(document).ready(function() {
+			$("#sendMajl_btn").click(function() {
+				$("#sendMajl_btn").html("Pošiljam...");
+				$("#sendMajl_btn").attr("disabled", true);
+				$("#sendMajl_btn").removeClass("btn-default")
+						.addClass("btn-info");
+	
+				var podatki = {
+					ime : $("#Name").val(),
+					naslov : $("#Email").val(),
+					sporocilo : $("#Message").val()
+				};
+	
+				$.ajax({
+					type : "POST",
+					url : "/sendContact",
+					dataType : "json",
+					contentType : "application/json",
+					async : true,
+					data : JSON.stringify(podatki),
+					success : function(res) {
+						if (res) {
+							$("#msg_ratalo").toggle();
+							$(".toggle:visible").not("#msg_ratalo")
+									.hide();
+							$("#sendMajl_btn").html("Pošlji");
+							$("#sendMajl_btn").attr("disabled",
+									false);
+							$("#sendMajl_btn").removeClass(
+									"btn-info").addClass(
+									"btn-default");
+						} else {
+							$("#msg_fejl").toggle();
+							$(".toggle:visible").not("#msg_fejl")
+									.hide();
+							$("#sendMajl_btn").html("Pošlji");
+							$("#sendMajl_btn").attr("disabled",
+									false);
+							$("#sendMajl_btn").removeClass(
+									"btn-info").addClass(
+									"btn-default");
+						}
+					},
+					error : function(res) {
+						$("#msg_fejl").toggle();
+						$(".toggle:visible").not("#msg_fejl")
+								.hide();
+						$("#sendMajl_btn").html("Pošlji");
+						$("#sendMajl_btn").attr("disabled", false);
+						$("#sendMajl_btn").removeClass("btn-info")
+								.addClass("btn-default");
+					}
+				});
+			});
+		});
+	</script>
+	
+	<script>
+		$(document).ready(function() {
+			$("#gumb").click(function() {
+				var id = $("#i_id").val();
 				var ime = $("#i_ime").val();
 				var email = $("#i_email").val();
-				
+	
 				var data = {
 					id : id,
 					ime : ime,
 					email : email
 				};
-				
+	
 				$.ajax({
 					type : "POST",
 					url : "/data",
@@ -27,44 +99,71 @@
 					contentType : "application/json",
 					async : true,
 					data : JSON.stringify(data),
-					success : function(res){
+					success : function(res) {
 						console.log("uspeh ", res.name);
 					},
-					error : function(res){
+					error : function(res) {
 						console.log("napaka");
 					}
 				});
 			});
-			$("#mejl").click(function(){
+			$("#mejl").click(function() {
 				$.ajax({
 					type : "GET",
 					url : "/send",
 					dataType : "json",
 					contentType : "application/json",
 					async : true,
-					success : function(res){
+					success : function(res) {
 						console.log("poslalo mejl: ", res);
 					},
-					error : function(res){
+					error : function(res) {
 						console.log("napaka mejl: ", res);
 					}
-					
+	
 				});
 			});
 		});
 	</script>
 
 	<body>
+		#parse ("templates/nav.vtl")
+		<div style="margin-left: 50px">
+			<h2 style="margin-left:20px">O meni</h2>
 	
-	<input type="number" id="i_id" /><br/>
-	<input type="text" id="i_ime" /><br/>
-	<input type="text" id="i_email" /><br/>
-	<button id="gumb">Submit</button>
+			<div style="width: 400px" class="LI-profile-badge col-sm-6" data-version="v1" data-size="large" data-locale="en_US" data-type="horizontal" data-theme="light" data-vanity="mihajamsek"><a class="LI-simple-link" href='https://si.linkedin.com/in/mihajamsek?trk=profile-badge'>Miha Jamsek</a></div>
+			<div class="col-sm-6" style="padding-top: 48px">
+				<a href="https://bitbucket.org/Jamsek-m/" target="_blank">
+					<img src="/images/bitbucket.png" style="width: 300px; height: 150px;" class="img-rounded" />
+				</a>
+			</div>
 	
-	<button id="mejl">Poslji mejl</button>
-	
-	
-	
-	
+			<div class="col-sm-12" style="margin-top: 50px">
+				<h3>Kontakt</h3>
+				<div style="outline: 1px black solid; width: 40em; padding:10px; margin-bottom: 20px">
+					<div class="form-group">
+						<label for="Name">Ime:</label>
+						<input type="text" name="Name" id="Name" class="form-control" />
+					</div>
+					<div class="form-group">
+						<label for="Email">Elektronski naslov:</label>
+						<input type="email" name="Email" id="Email" class="form-control" />
+					</div>
+					<div class="form-group">
+						<label for="Message">Sporočilo:</label>
+						<textarea name="Message" id="Message" cols="40" rows="5" class="form-control"></textarea>
+					</div>
+					<div class="alert alert-success toggle alert-dismissable" style="text-align: center" id="msg_ratalo">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+						Sporočilo je bilo uspešno poslano!
+					</div>
+					<div class="alert alert-danger toggle alert-dismissable" style="text-align: center" id="msg_fejl">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+						Napaka pri pošiljanju sporočila! Poizkusite ponovno kasneje.
+					</div>
+					<button type="submit" id="sendMajl_btn" style="width:10em" class="btn btn-default centered">Pošlji</button>
+				</div>
+			</div>	
+		</div>
 	</body>
 </html>
