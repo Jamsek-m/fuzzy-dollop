@@ -8,6 +8,7 @@
 	</head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
 
 	<style>
 	.toggle {
@@ -74,53 +75,6 @@
 						$("#sendMajl_btn").removeClass("btn-info")
 								.addClass("btn-default");
 					}
-				});
-			});
-		});
-	</script>
-	
-	<script>
-		$(document).ready(function() {
-			$("#gumb").click(function() {
-				var id = $("#i_id").val();
-				var ime = $("#i_ime").val();
-				var email = $("#i_email").val();
-	
-				var data = {
-					id : id,
-					ime : ime,
-					email : email
-				};
-	
-				$.ajax({
-					type : "POST",
-					url : "/data",
-					dataType : "json",
-					contentType : "application/json",
-					async : true,
-					data : JSON.stringify(data),
-					success : function(res) {
-						console.log("uspeh ", res.name);
-					},
-					error : function(res) {
-						console.log("napaka");
-					}
-				});
-			});
-			$("#mejl").click(function() {
-				$.ajax({
-					type : "GET",
-					url : "/send",
-					dataType : "json",
-					contentType : "application/json",
-					async : true,
-					success : function(res) {
-						console.log("poslalo mejl: ", res);
-					},
-					error : function(res) {
-						console.log("napaka mejl: ", res);
-					}
-	
 				});
 			});
 		});

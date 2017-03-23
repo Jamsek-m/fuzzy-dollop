@@ -28,11 +28,12 @@ public class SendMailVelocity{
 		VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         velocityEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, NullLogChute.class.getName());
-        velocityEngine.setProperty("classpath.resource.loader.class",
-                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        velocityEngine.setProperty("classpath.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        velocityEngine.setProperty("input.encoding", "UTF-8");
+        velocityEngine.setProperty("output.encoding", "UTF-8");
         StringWriter stringWriter = null;
         velocityEngine.init();
-        Template template = velocityEngine.getTemplate(templateName);
+        Template template = velocityEngine.getTemplate(templateName, "UTF-8");
 
         stringWriter = new StringWriter();
         template.merge(velocityContext, stringWriter);
@@ -64,7 +65,7 @@ public class SendMailVelocity{
 		try{
 			StringWriter sw = getVelocityEngine(templateName, podatki);
 			Message message = new MimeMessage(session);
-            message.setContent(sw.toString() + "", "text/html");
+            message.setContent(sw.toString() + "", "text/html; charset=UTF-8");
             message.setFrom(new InternetAddress("me@gmail.com"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userMailId));
             message.setSubject(subject);

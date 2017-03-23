@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>mJamsek Site - Projects</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<meta charset="utf-8" />
+</head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<body>
+	#parse ("templates/nav.vtl")
+	<div style="padding-left:50px">
+		<ul>
+		#foreach ($projekt in $podatki)
+		<li>
+			<div>
+			<a href="/projects/$projekt.id" style="font-size:16px"> $projekt.name </a>
+			<p style="font-size:14px">$projekt.desk</p>
+			</div>
+		</li>
+		#end
+		</ul>
+
+
+
+
+	</div>
+
+</body>
+</html>
